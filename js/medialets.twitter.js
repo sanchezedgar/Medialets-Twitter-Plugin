@@ -41,7 +41,7 @@ $m.twitter.search('@medialets', function(data){
         // ----- ----- -----
         var local = {
             intents : 'https://twitter.com/intent/',
-            php : '../lib/twitter.php',
+            php : 'lib/twitter.php',
             consumer_key : 'LGqv8YPBjgIQFwu7YZ9IFw',
             consumer_secret : 'yRKwre0DMJVeCNrmUZUeAR0NqwaiO9ZvE0SiglCYWPY',
             expire : 300, //In seconds
@@ -220,7 +220,7 @@ $m.twitter.search('@medialets', function(data){
              */
             tweet : function(text, in_reply_to) {
                 var params = {
-                    text : encodeURIComponent(text)
+                    text : text
                 };
                 if(typeof parseFloat(in_reply_to) === "number" && !isNaN(in_reply_to)){
                     params.in_reply_to = encodeURIComponent(in_reply_to);
