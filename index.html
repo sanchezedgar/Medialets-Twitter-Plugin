@@ -41,78 +41,20 @@
 </div>
 
 <script src="js/medialets.runtime.js" type="text/javascript"></script>
+<script src="js/medialets.twitter.js" type="text/javascript"></script>
 <script type="text/javascript">
 function init(){
 
-    /****************************/
-    /* 1. VARIABLE DECLARATIONS */
-    /****************************/
-
-    /* CREATE JS VARIABLES */
-    var $d = document,
-        $b = $m.find('body')[0],
-        $c = $m('container'),
-
-    /* EXPAND PARAMS */
-    params = {
-        type : (function(typeID) {
-        switch (typeID) {
-            case 1:
-            return 'modal';
-            break;
-            case 2:
-            return 'adaptable';
-            break;
-            case 3:
-            return 'growable';
-            break;
-            default:
-            return '';
-            break;
-            }
-        }(1)),
-        uri: 'expandable.html',
-        width: 320,
-        height: 416,
-        offsetCorner : (function(corner) {
-            var pos = '';
-            switch (corner) {
-                case 1:
-                    pos = 'top-left';
-                break;
-                case 2:
-                    pos = 'top-right';
-                break;
-                case 3:
-                    pos = 'bottom-left';
-                break;
-                case 4:
-                    pos = 'bottom-right';
-                break;
-                default:
-                    pos = '';
-                break;
-            }
-            return pos;
-        }(1)),
-        offsetX: 0,
-        offsetY: 0,
-        allowOffscreen: 0,
-        transparency: false
-    };
-
-    /* MAKE AD CLICKTHROUGH TO EXPAND */
-    $m.bind($c, $m.ui.tap, function(e) {
-        try {
-            medialets.expand(params);
-        } catch(err) {
-            try {
-                MMBridge.expandAd();
-            } catch(e) {
-                top.window.open(params.uri);
-            }
-        }
+    //Clickthrough to tweet predetermined tweet content. User will have to login in seperate window.
+    $m.bind(document, $m.ui.tap, function(){
+        $m.twitter.tweet('This week in mobile news...');
     });
+
+    //Retrieve search results
+    $m.twitter.search('@medialets', function(data){
+        console.log(data);
+    });
+
 }
 
 //function to kickoff creative
