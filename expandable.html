@@ -1,0 +1,475 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="initial-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+<meta charset="utf-8">
+<meta name="format-detection" content="telephone=no" />
+<title></title>
+
+<style type="text/css">
+/* Begin Medialets Reset CSS */
+* {
+	margin:0;padding:0;border:0;outline:0;vertical-align:baseline;background:transparent;-webkit-touch-callout:none;-webkit-user-select:none;-webkit-text-size-adjust:none;
+	-webkit-tap-highlight-color:rgba(0,0,0,0);
+    -moz-box-sizing:border-box;-webkit-box-sizing:border-box;box-sizing:border-box;
+}
+/* End Medialets Reset CSS */
+
+/* BOX THAT CONTAINS EVERYTHING IN THE AD */
+#container {
+	position:absolute;
+	overflow:hidden;
+	height:416px;
+	width:320px;
+	left:0;
+	top:0;
+}
+#content {
+	position:absolute;
+	overflow:hidden;
+	height:416px;
+	width:320px;
+	top:0px;
+	left:0px;
+}
+
+/* DISMISS BUTTON */
+#close {
+	position:absolute;
+	overflow:hidden;
+	height:50px;
+	width: 50px;
+	top:0;
+	right:0;
+	background: url(images/mm_close_btn.png) no-repeat top right;
+	-webkit-background-size: 50px auto;
+	z-index: 100;
+}
+@media all and (-webkit-min-device-pixel-ratio:2) {
+    #close {
+        background: url(images/mm_close_btn2x.png) no-repeat;
+        -webkit-background-size: 50px auto;
+    }
+}
+/* END DISMISS BUTTON */
+
+
+
+/* INSERT AD-SPECIFIC CSS RULES HERE */
+#container {
+	background: url(images/bg.jpg);
+    color: #333;
+    font-size: 14px;
+    line-height: 18px;
+    font-family: "Helvetica Neue",Arial,sans-serif;
+}
+
+/*----------------------------------- TIMELINE - Start -----------------------------------*/
+#timelineScroll {
+	position: absolute;
+	top: 5px;
+	left: 0;
+	width: 100%;
+	height: 411px;
+}
+    #timelineWrapper {
+        position: relative;
+        padding-bottom: 5px
+    }
+    	#timeline {
+    		position: relative;
+    		margin: 10px auto 20px;
+    		width: 300px;
+    		background-color: #fff;
+    		border-radius: 6px;
+            border: 1px solid rgba(0,0,0,.30);
+    	}
+            #contentHeader {
+                text-rendering: optimizeLegibility;
+                font-size: 18px;
+                font-weight: bold;
+                line-height: 35px;
+                padding: 0 12px;
+                height: 35px;
+            }
+/*----------------------------------- TIMELINE - End -----------------------------------*/
+
+/*----------------------------------- STREAM - Start -----------------------------------*/
+#stream {
+	list-style: none;
+}
+    .streamItem {
+        padding: 9px 10px;
+        border-top: 1px solid rgba(0,0,0,.1);
+        min-height: 74px;
+    }
+        .tweetContent {
+            margin-left: 58px;
+        }
+            .tweetHeader {}
+                .avatar {
+                    float: left;
+                    width: 48px;
+                    height: 48px;
+                    margin-top: 3px;
+                    border-radius: 5px;
+                    margin-left: -58px;
+                }
+                .fullname {}
+                .username {
+                    font-size: 12px;
+                    color: #999;
+                }
+                .time {
+                    font-size: 10px;
+                    float: right;
+                    margin-top: 1px;
+                    color: #999;
+                }
+            .tweetText {
+                word-wrap: break-word;
+                line-height: 18px;
+            }
+            .tweetFooter {
+                margin-bottom: -8px;
+            }
+                .tweetFooter ol {
+                    list-style: none;
+                    text-align: right;
+                    font-size: 0;
+                }
+                    .tweetFooter li {
+                        display: inline-block;
+                        text-align: left;
+                        font-size: 12px;
+                        color: #038543;
+                        padding-left: 17px;
+                        margin-left: 8px;
+                        background-repeat: no-repeat;
+                        background-position: 0px 0px;
+                    }
+
+                    .tweetFooter .reply {
+                        background-image: url('images/reply.png');
+                    }
+                    .tweetFooter .retweet {
+                        background-image: url('images/retweet.png');
+                    }
+                    .tweetFooter .favorite {
+                        background-image: url('images/favorite.png');
+                    }
+/*----------------------------------- STREAM - End -----------------------------------*/
+
+</style>
+</head>
+
+<body>
+<div id="container" class="home">
+	<div id="content">
+		<!-- INSERT AD-SPECIFIC HTML ELEMENTS HERE -->
+
+        <div id="timelineScroll">
+
+            <div id="timelineWrapper">
+
+    			<div id="timeline">
+
+    				<div id="contentHeader">
+    					Tweets
+    				</div>
+
+    				<ol id="stream"></ol>
+
+    			</div>
+
+    		</div>
+
+        </div>
+
+	</div>
+	<div id="close"></div>
+</div>
+
+<script type="text/javascript" charset="utf-8">medialetsViewCanScroll = true;</script>
+<script src="js/medialets.runtime.js" type="text/javascript"></script>
+<script src="js/medialets.twitter.js" type="text/javascript"></script>
+<script src="js/iscroll.js" type="text/javascript"></script>
+<script type="text/javascript">
+var androidICSFix = function(e) {
+        return false;
+    },
+    mobileOS,
+    mobileOSver;
+(function() {
+    var ua = window.navigator.userAgent.toLowerCase(),
+        uaindex = '';
+
+    if ( ua.match(/iPad/i) || ua.match(/iPhone/i) || ua.match(/iPod/i) ){
+        mobileOS = 'ios';
+        uaindex  = ua.toLowerCase().indexOf( 'os ' );
+    } else if ( ua.match(/Android/i) ) {
+        mobileOS = 'android';
+        uaindex  = ua.toLowerCase().indexOf( 'android ' );
+    } else if (ua.toLowerCase().indexOf('windows') >= 0) {
+        mobileOS = 'windows';
+    } else {
+        mobileOS = 'unknown';
+    }
+
+    if ( mobileOS === 'ios'  &&  uaindex > -1 ){
+        mobileOSver = parseFloat(ua.substr( uaindex + 3, 3 ).replace( '_', '.' ));
+    } else if ( mobileOS === 'android'  &&  uaindex > -1 ) {
+        mobileOSver = parseFloat(ua.substr( uaindex + 8, 3 ));
+    } else {
+        mobileOSver = 'unknown';
+    }
+
+    if(mobileOS === 'android' && mobileOSver === 4) {
+        top.document.addEventListener("touchstart", androidICSFix, false);
+        top.document.addEventListener("touchmove", androidICSFix, false);
+        top.document.addEventListener("touchend", androidICSFix, false);
+    }
+
+    if( !(mobileOS === 'android' && mobileOSver < 4) ){
+        document.body.className += ' hardwareAcc';
+    }
+})();
+function init() {
+
+	/****************************/
+	/* 1. VARIABLE DECLARATIONS */
+	/****************************/
+
+	/* CREATE JS VARIABLES */
+	var $d = document,
+		$b = $m.find('body')[0],
+		$c = $m('container'),
+		$close = $m('close'),
+		$content = $m('content'),
+        $stream = $m('stream'),
+
+		disable = false,
+
+		contentScroll = new iScroll('timelineScroll', {
+            hScroll : false,
+            hideScrollbar : true,
+            onScrollEnd: function(e) {
+                this.moved = true;
+            },
+            //Handle the click event for the thumbnails within the iscroll
+            onTouchEnd: function(e) {
+            	if(this.moved){
+                    return false;
+                }
+
+                if($m.hasClass(e.target.parentElement, 'tweetHeader') || $m.hasClass(e.target, 'tweetHeader')) {
+                    var $target = $m.hasClass(e.target.parentElement, 'tweetHeader')? e.target.parentElement : e.target;
+                    medialets.twitter.follow($target.getAttribute('data-follow'));
+                    return false;
+                }
+
+                if($m.hasClass(e.target, 'reply')) {
+                    medialets.twitter.tweet('',e.target.getAttribute('data-reply'));
+                    return false;
+                }
+                if($m.hasClass(e.target, 'retweet')) {
+                    medialets.twitter.retweet(e.target.getAttribute('data-retweet'));
+                    return false;
+                }
+                if($m.hasClass(e.target, 'favorite')) {
+                    medialets.twitter.favorite(e.target.getAttribute('data-favorite'));
+                    return false;
+                }
+            }
+        });
+
+	/****************************/
+	/* 2. FUNCTION DECLARATIONS */
+	/****************************/
+
+	/* INSERT AD-SPECIFIC JAVASCRIPT FUNCTION DECLARATIONS HERE (OPTIONAL) */
+
+	/* Click Through function
+    ----- ----- ----- ----- ----- ----- ----- ----- ----- */
+    var clickThrough = function(url, tracking) {
+        medialets.track.incrementKey(tracking);
+        setTimeout(function(){
+            try{
+                medialets.open(url);
+            } catch (err){
+                top.window.open(url);
+            }
+        }, 250);
+    };
+    /* ----- ----- ----- ----- ----- ----- ----- ----- ----- */
+
+    var buildStream = function(tweets){
+        /*
+        <li class="streamItem">
+            <div class="tweetContent">
+                <div class="tweetHeader">
+                    <img class="avatar" src="https://si0.twimg.com/profile_images/2284291316/xu1u3i11ugj03en53ujr_normal.png" alt="">
+                    <strong class="fullname">Twitter Government</strong>
+                    <span class="username">@gov</span>
+                    <small class="time">28 Aug</small>
+                </div>
+
+                <p class="tweetText">
+                    Also, on the blog: Commemorating the March on Washington, in Tweets
+                </p>
+
+                <div class="tweetFooter">
+                    <ol>
+                        <li class="reply">Reply</li>
+                        <li class="retweet">Retweet</li>
+                        <li class="favorite">Favorite</li>
+                    </ol>
+                </div>
+
+            </div>
+        </li>
+        */
+        var $items = document.createDocumentFragment(),
+                $item = document.createElement('li'),
+                    $content = document.createElement('div'),
+                        $header = document.createElement('div'),
+                            $avatar = document.createElement('img'),
+                            $fullname = document.createElement('strong'),
+                            $username = document.createElement('span'),
+                            $time = document.createElement('small'),
+                        $tweetText = document.createElement('p'),
+                        $tweetFooter = document.createElement('div'),
+                            $ol = document.createElement('ol'),
+                                $reply = document.createElement('li'),
+                                $retweet = document.createElement('li'),
+                                $favorite = document.createElement('li');
+
+        $item.className = 'streamItem';
+            $content.className = 'tweetContent';
+                $header.className = 'tweetHeader';
+                    $avatar.className = 'avatar';
+                    $fullname.className = 'fullname';
+                    $username.className = 'username';
+                    $time.className = 'time';
+                $tweetText.className = 'tweetText';
+                $tweetFooter.className = 'tweetFooter';
+                        $reply.className = 'reply';
+                        $retweet.className = 'retweet';
+                        $favorite.className = 'favorite';
+                        $reply.innerHTML = 'Reply';
+                        $retweet.innerHTML = 'Retweet';
+                        $favorite.innerHTML = 'Favorite';
+
+        $header.appendChild($avatar);
+        $header.appendChild($fullname);
+        $header.appendChild($username);
+        $header.appendChild($time);
+        $ol.appendChild($reply);
+        $ol.appendChild($retweet);
+        $ol.appendChild($favorite);
+        $tweetFooter.appendChild($ol);
+        $content.appendChild($header);
+        $content.appendChild($tweetText);
+        $content.appendChild($tweetFooter);
+        $item.appendChild($content);
+
+        for(var i=0, len=tweets.length; i<len; i++) {
+            $avatar.src = tweets[i].user.profile_image_url;
+            $fullname.innerHTML = tweets[i].user.name;
+            $username.innerHTML = ' @'+tweets[i].user.screen_name;
+            // $time.innerHTML = '24 hour';
+            $tweetText.innerHTML = tweets[i].text;
+
+            $header.setAttribute('data-follow', tweets[i].user.screen_name);
+
+            $reply.setAttribute('data-reply', tweets[i].id_str);
+            $retweet.setAttribute('data-retweet', tweets[i].id_str);
+            $favorite.setAttribute('data-favorite', tweets[i].id_str);
+
+            $items.appendChild($item.cloneNode(true));
+        }
+
+        $stream.innerHTML = '';
+        $stream.appendChild($items);
+
+        setTimeout(function(){
+            contentScroll.refresh();
+        },0);
+    };
+
+    var loadStream = function(){
+        $m.twitter.search('batman', function(data){
+            buildStream(data.statuses);
+        });
+    };
+
+    loadStream();
+
+    $m.twitter.custom('https://api.twitter.com/1.1/statuses/retweets/21947795900469248.json', function(data){
+        console.log('custom',data);
+    }, 100);
+
+	/****************************/
+	/* 3. ATTACH EVENT HANDLERS */
+	/****************************/
+
+	/* INSERT YOUR AD-SPECIFIC EVENT HANDLERS HERE (OPTIONAL) */
+
+
+
+	top.document.addEventListener($m.ui.touchmove, function(e){ e.preventDefault(); }, false);
+
+	/******************************/
+	/*  DISMISS EVENT HANDLER  	  */
+	/******************************/
+	$m.bind($close, $m.ui.tap, function() {
+		try {
+		  medialets.dismiss();
+		} catch(err) {
+		  try {
+		    MMBridge.dismissAd();
+		  } catch(err2) {
+		    $d.location = 'index.html';
+		  }
+		}
+	});
+
+}
+
+medialets.onReady(init);
+
+/* Preloader
+----- ----- ----- ----- ----- ----- ----- ----- ----- */
+var preload = function(arr){
+    var newimages=[],
+        loadedimages = 0,
+        postaction = function(){},
+        arr = (typeof arr !== 'object')? [arr] : arr;
+
+    function imageloadpost(){
+        loadedimages++;
+        if (loadedimages === arr.length){
+            postaction(newimages);
+        }
+    }
+    for (var i=0; i<arr.length; i++){
+        newimages[i] = new Image();
+        newimages[i].src = arr[i];
+        newimages[i].onload = function(){
+            imageloadpost();
+        }
+        newimages[i].onerror = function(){
+            imageloadpost();
+        }
+    }
+    return {
+        done:function(f){
+            postaction=f || postaction
+        }
+    }
+};
+/* ----- ----- ----- ----- ----- ----- ----- ----- ----- */
+</script>
+</body>
+</html>
