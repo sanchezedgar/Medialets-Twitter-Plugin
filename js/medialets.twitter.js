@@ -41,7 +41,7 @@ $m.twitter.search('@medialets', function(data){
         // ----- ----- -----
         var local = {
             intents : 'https://twitter.com/intent/',
-            php : '../../php/twitter.php',
+            php : '../../lib/twitter.php',
             consumer_key : 'LGqv8YPBjgIQFwu7YZ9IFw',
             consumer_secret : 'yRKwre0DMJVeCNrmUZUeAR0NqwaiO9ZvE0SiglCYWPY',
             expire : 300, //In seconds
