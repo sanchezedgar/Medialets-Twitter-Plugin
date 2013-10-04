@@ -14,11 +14,11 @@ $action = $_GET['action'];
 $param = (isset($_GET['param']))? $_GET['param'] : '';
 $expire = (isset($_GET['expire']) && is_numeric($_GET['expire']))? $_GET['expire'] : 300;
 $callback = 'medialets.twitter.jsonp.'.$_GET['callback'];
-
+$count = (isset($_GET['count']))? $_GET['count'] : 15;
 $twitter = new Twitter($consumer_key, $consumer_secret, $expire);
 
 if(isset($action) && method_exists($twitter,$action)){
-    $results = $twitter->{$action}($param);
+    $results = $twitter->{$action}($param, $count);
     if($_GET['debug'] == 'true'){
         $results = json_decode($results, true);
         $results["query"] = $_SERVER['QUERY_STRING'];
