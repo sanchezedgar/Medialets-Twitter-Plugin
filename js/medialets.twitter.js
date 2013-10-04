@@ -327,14 +327,16 @@ $m.twitter.search('@medialets', function(data){
              * Queries may additionally be limited by complexity.
              * Example Values: @medialets
              * @param {Function} callback Callback function to return with the data from the API
+             * @param {Number} count Number of results to return back. Default is 15.
              * @param {Boolean} cache If set to false, results will always get non-cached, fresh results
              * @returns {Function} Callback function with the retrieved JSON object from the Twitter REST API as a parameter.
              */
-            search :  function(query, callback, cache) {
+            search :  function(query, callback, count, cache) {
                 get({
                     action : 'search',
                     param : encodeURIComponent(query),
-                    cache : cache
+                    cache : cache,
+                    count : count || 15
                 }, callback);
             },
 
@@ -347,14 +349,16 @@ $m.twitter.search('@medialets', function(data){
              *
              * @param {String|Number} user The alphanumerical user name OR numerical user id of the user for whom to return results for.
              * @param {Function} callback Callback function to return with the data from the API
+             * @param {Number} count Number of results to return back. Default is 15.
              * @param {Boolean} cache If set to false, results will always get non-cached, fresh results
              * @returns {Function} Callback function with the retrieved JSON object from the Twitter REST API as a parameter.
              */
-            userTimeline :  function(user, callback, cache) {
+            userTimeline :  function(user, callback, count, cache) {
                 get({
                     action : 'userTimeline',
                     param : encodeURIComponent(user),
-                    cache : cache
+                    cache : cache,
+                    count : count || 15
                 }, callback);
             },
 
