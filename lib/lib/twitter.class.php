@@ -13,11 +13,7 @@ class Twitter
         $consumer_secret,
         $bearer_token;
 
-    function __construct($key, $secret, $expire=300) {
-        header("Content-Type: application/javascript");
-        header("Cache-Control: must-revalidate");
-        header("Expires: " . gmdate("D, d M Y H:i:s", time() + $expire) . " GMT");
-
+    function __construct($key, $secret) {
         $this->consumer_key = $key;
         $this->consumer_secret = $secret;
         $this->getBearerToken();
