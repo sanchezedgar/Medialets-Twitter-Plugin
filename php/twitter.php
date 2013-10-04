@@ -4,7 +4,7 @@ $expire = (isset($_GET['expire']) && is_numeric($_GET['expire']))? $_GET['expire
 header("Cache-Control: must-revalidate, public, max-age=".$expire.", s-maxage=".$expire);
 // header("Cache-Control: public");
 // header("Expires: " . gmdate("D, d M Y H:i:s", time() + $expire) . " GMT");
-header("Content-Type: application/javascript");
+header("Content-Type: application/x-www-form-urlencoded");
 
 require('lib/Twitter.class.php');
 
