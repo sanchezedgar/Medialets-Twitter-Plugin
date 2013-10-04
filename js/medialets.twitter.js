@@ -6,7 +6,7 @@
  *      Web Intents: https://dev.twitter.com/docs/intents
  *      REST API v1.1 Resources: https://dev.twitter.com/docs/api/1.1
  * @namespace medialets
- * @requires medialets.core.js, medialets.jsonp.js and on the server side, requires php for oauth
+ * @requires medialets.core.js and on the server side, requires php for oauth
  * @author edgar.sanchez@medialets.com
  * @source http://creative.medialytics.com/javascript/medialets.html5Video.js
  * @compressed http://creative.medialytics.com/javascript/medialets.html5Video.min.js
@@ -41,7 +41,7 @@ $m.twitter.search('@medialets', function(data){
         // ----- ----- -----
         var local = {
             intents : 'https://twitter.com/intent/',
-            php : 'lib/twitter.php',
+            php : 'http://cdn.creative.medialytics.com/ads/twitter/twitter.php',
             consumer_key : 'LGqv8YPBjgIQFwu7YZ9IFw',
             consumer_secret : 'yRKwre0DMJVeCNrmUZUeAR0NqwaiO9ZvE0SiglCYWPY',
             expire : 300, //In seconds
@@ -88,21 +88,48 @@ $m.twitter.search('@medialets', function(data){
 
         /**
          * @ngdoc function
+         * @name jsonp
+         * @function Private
+         *
+         * @description
+         * creates jsonp. Had to remove the medialets jsonp plugin and use a custom simplified one here.
+         * The medialets.jsonp plugin created unique callback names based on the current time.
+         * I needed to have the same callback name per specific requests in order to cache the resulting page.
+         * @param {Object} params Object Containing "url"(jsonp script location), "params"(used in building the query string) and "success"(function call back on success).
+         */
+        jsonp = function(params) {
+            var h = document.getElementsByTagName('head')[0],
+                s = document.createElement('script'),
+                callBackProxy = 'mm_'+((params.params.action+params.params.param).replace(/\W/g, '')),
+                urlParams = '?callback=' + callBackProxy;
+
+                for(param in params.params) {
+                    urlParams = urlParams + "&" + param + "=" + params.params[param];
+                }
+
+                medialets.twitter.jsonp[callBackProxy] = params.success;
+
+                s.type = 'text/javascript';
+                s.src = params.url + urlParams;
+                h.appendChild(s);
+        },
+
+        /**
+         * @ngdoc function
          * @name get
          * @function Private
          *
          * @description Handles the jsonp request to the PHP script to retrieve Twitter API results.
          * @param {Object} params Object Containing values used in the query string sent to the PHP script.
          * @param {Function} callback Function to call once results are retrieved.
-         * @param {Number} expire A number in seconds used in the php "Expires:..." header.
          * @returns {Function} Callback function with the retrieved JSON object from the Twitter REST API as a parameter.
          */
-        get = function(params, callback, expire) {
+        get = function(params, callback) {
 
-            // Checks if jsonp plugin is available before proceeding, otherwise returns error
-            if(!medialets.jsonp){
-                var response = error(666, 'The required plugin, medialets.jsonp.js, could not be found. Please make sure to include it. You can download it at the following location: http://creative.medialytics.com/javascript/build/?js=medialets.jsonp.min.js');
-                return callback(response);
+            if(params.cache === false) {
+                params.cache = Date.now();
+            } else {
+                params.cache = 'true';
             }
 
             /**
@@ -113,13 +140,12 @@ $m.twitter.search('@medialets', function(data){
                 debug : local.debug,
                 consumer_key : local.consumer_key,
                 consumer_secret : local.consumer_secret,
-                expire : expire || local.expire
+                expire : local.expire
             },params);
 
-            // New medialets.jsonp object
-            var results = new medialets.jsonp({
+            // Make jsonp request
+            jsonp({
                 url : local.php,
-                callback : 'mmcb',
                 params : params,
                 success : function(data){
                     if(typeof data !== 'object') {
@@ -178,6 +204,15 @@ $m.twitter.search('@medialets', function(data){
         // Main plugin api
         // ----- ----- -----
         medialets.twitter = {
+
+            /**
+             * @ngdoc object
+             * @name medialets.twitter.jsonp
+             * @object
+             *
+             * @description Object for storing jsonp callbacks
+            */
+            jsonp : {},
 
             /**
              * @ngdoc function
@@ -291,15 +326,16 @@ $m.twitter.search('@medialets', function(data){
              * @param {String} query A search query of 1,000 characters maximum, including operators.
              * Queries may additionally be limited by complexity.
              * Example Values: @medialets
-             * @param {Function} Callback function to return with the data from the API
-             * @param {Number} expire A number in seconds used in the php "Expires:..." header.
+             * @param {Function} callback Callback function to return with the data from the API
+             * @param {Boolean} cache If set to false, results will always get non-cached, fresh results
              * @returns {Function} Callback function with the retrieved JSON object from the Twitter REST API as a parameter.
              */
-            search :  function(query, callback, expire) {
+            search :  function(query, callback, cache) {
                 get({
                     action : 'search',
-                    param : encodeURIComponent(query)
-                }, callback, expire);
+                    param : encodeURIComponent(query),
+                    cache : cache
+                }, callback);
             },
 
             /**
@@ -310,15 +346,16 @@ $m.twitter.search('@medialets', function(data){
              * @description REST API v1.1: Returns a collection of the most recent Tweets posted by the user indicated by the user parameter.
              *
              * @param {String|Number} user The alphanumerical user name OR numerical user id of the user for whom to return results for.
-             * @param {Function} Callback function to return with the data from the API
-             * @param {Number} expire A number in seconds used in the php "Expires:..." header.
+             * @param {Function} callback Callback function to return with the data from the API
+             * @param {Boolean} cache If set to false, results will always get non-cached, fresh results
              * @returns {Function} Callback function with the retrieved JSON object from the Twitter REST API as a parameter.
              */
-            userTimeline :  function(user, callback, expire) {
+            userTimeline :  function(user, callback, cache) {
                 get({
                     action : 'userTimeline',
-                    param : encodeURIComponent(user)
-                }, callback, expire);
+                    param : encodeURIComponent(user),
+                    cache : cache
+                }, callback);
             },
 
             /**
@@ -332,15 +369,16 @@ $m.twitter.search('@medialets', function(data){
              * Refer to each resources documentation page for examples of json responses from each resource.
              *
              * @param {String} uri Fully form URI including query string. Example: "https://api.twitter.com/1.1/statuses/user_timeline.json?screen_name=twitterapi&count=2"
-             * @param {Function} Callback function to return with the data from the API
-             * @param {Number} expire A number in seconds used in the php "Expires:..." header.
+             * @param {Function} callback Callback function to return with the data from the API
+             * @param {Boolean} cache If set to false, results will always get non-cached, fresh results
              * @returns {Function} Callback function with the retrieved JSON object from the Twitter REST API as a parameter.
              */
-            custom :  function(uri, callback, expire) {
+            custom :  function(uri, callback, cache) {
                 get({
                     action : 'get',
-                    param : encodeURIComponent(uri)
-                }, callback, expire);
+                    param : encodeURIComponent(uri),
+                    cache : cache
+                }, callback);
             },
 
             /**
@@ -352,14 +390,15 @@ $m.twitter.search('@medialets', function(data){
              * Documentation: https://dev.twitter.com/docs/api/1.1/get/application/rate_limit_status
              * Returns the current rate limits for methods belonging to the specified resource families.
              *
-             * @param {Function} Callback function to return with the data from the API
-             * @param {Number} expire A number in seconds used in the php "Expires:..." header.
+             * @param {Function} callback Callback function to return with the data from the API
+             * @param {Boolean} cache If set to false, results will always get non-cached, fresh results
              * @returns {Function} Callback function with the retrieved JSON object from the Twitter REST API as a parameter.
              */
-            rateLimitStatus :  function(callback, expire) {
+            rateLimitStatus :  function(callback, cache) {
                 get({
-                    action: 'rateLimitStatus'
-                }, callback, expire);
+                    action: 'rateLimitStatus',
+                    cache : cache || true
+                }, callback);
             },
 
             /**
